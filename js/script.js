@@ -1,5 +1,5 @@
-import ehUmCPF from "./valida_cpf";
-import ehMaiorDeIdade from "./valida_idade";
+import ehUmCPF from "./valida-cpf.js";
+import ehMaiorDeIdade from "./valida-idade.js";
 const camposDoFormulario = document.querySelectorAll('[required]')
 const formulario = document.querySelector('[data-formulario]');
 
@@ -13,16 +13,15 @@ formulario.addEventListener("submit", (e) => {
         "cpf": e.target.elements["cpf"].value,
         "aniversario": e.target.elements["aniversario"].value,
     }
-    //armazenamento local para inserir item e coonverter ele em json
+
     localStorage.setItem("cadastro", JSON.stringify(listaRespostas));
-    //para redirecionar para outra parte do formulario
+
     window.location.href = "./abrir-conta-form-2.html";
 })
 
 camposDoFormulario.forEach((campo) => {
     campo.addEventListener("blur", () => verificaCampo(campo));
-    //para retirar as menssagens padroes de erros nos campos 
-    campo.addEventListener("invalid", evento => evento.preventDefault() );
+    campo.addEventListener("invalid", evento => evento.preventDefault())
 })
 
 const tiposDeErro = [
@@ -33,7 +32,6 @@ const tiposDeErro = [
     'customError'
 ]
 
-//menssagens customizadas para cada erro em especifico 
 const mensagens = {
     nome: {
         valueMissing: "O campo de nome não pode estar vazio.",
@@ -43,7 +41,7 @@ const mensagens = {
     email: {
         valueMissing: "O campo de e-mail não pode estar vazio.",
         typeMismatch: "Por favor, preencha um email válido.",
-        tooShort: "Por favor, preencha um e-mail válido."
+        tooShort: "Por favor, preencha um email válido."
     },
     rg: {
         valueMissing: "O campo de RG não pode estar vazio.",
@@ -66,31 +64,26 @@ const mensagens = {
 }
 
 function verificaCampo(campo) {
-    let mensagem = " ";
+    let mensagem = "";
     campo.setCustomValidity('');
-    if(campo.name == "cpf" && campo.value.lenght >= 11){
+    if (campo.name == "cpf" && campo.value.length >= 11) {
         ehUmCPF(campo);
     }
     if (campo.name == "aniversario" && campo.value != "") {
         ehMaiorDeIdade(campo);
     }
-    //para cada erro na lista, cada campo com "validity" cada cmpo com erro 
-    //tera sua menssagem de erro personalisada
     tiposDeErro.forEach(erro => {
         if (campo.validity[erro]) {
             mensagem = mensagens[campo.name][erro];
             console.log(mensagem);
         }
     })
-
-    //a constante mensagemErro pega o valor do span .mensagem-erro do html, o parentNode é para pegar a menssagem de erro no span certo e não em todos os outros 
     const mensagemErro = campo.parentNode.querySelector('.mensagem-erro');
     const validadorDeInput = campo.checkValidity();
 
     if (!validadorDeInput) {
-        mensagem.textContent = mensagem;
+        mensagemErro.textContent = mensagem;
     } else {
         mensagemErro.textContent = "";
     }
 }
-
